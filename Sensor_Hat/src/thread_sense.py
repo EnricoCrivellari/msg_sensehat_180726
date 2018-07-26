@@ -33,6 +33,11 @@ class TestThread(threading.Thread):
         if self.threadID == 3:
             print_counter(self.name, self.counter, 50)
 
+        if self.threadID == 4:
+            invio_messaggio(self.name, self.counter, 10)
+
+			
+
 #  DEFINIZIONE  THREAD  ID = 1
 #  Dichiarazione di tutte le azioni che devono essere svolte dal THREAD
 def acq_sensori(threadName, delay, counter):
@@ -78,17 +83,29 @@ def print_counter(threadName, delay, counter):
         time.sleep(delay)
         print(threadName, "ciclo", str(counter))
         counter -= 1
-        
+
+#  DEFINIZIONE  THREAD  ID = 3
+#  Dichiarazione di tutte le azioni che devono essere svolte dal THREAD
+def invio_messaggio(threadName, delay, counter):
+    while counter:
+        print ("messaggio - counter =" + str(counter) + " - threadName: " + threadName)
+        counter -= 1 
+
+
+
 # Create new threads
 thread1 = TestThread(1, "Thread 1", 1)
 thread2 = TestThread(2, "Thread 2", 2)
 thread3 = TestThread(3, "Thread 3", 3)
+thread4 = TestThread(4, "Thread 4", 4)
 
 # Start new Threads
 thread1.start()
 thread2.start()
 thread3.start()
+thread4.start()
 thread1.join()
 thread2.join()
 thread3.join()
-print("Fine del main thread")
+thread4.join()
+print(" -- Fine del main thread  -- ")
