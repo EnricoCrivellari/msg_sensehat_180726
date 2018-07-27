@@ -4,8 +4,8 @@
 import threading
 import time
 from random import randint
-#from sense_hat import SenseHat
-#sense = SenseHat()
+from sense_hat import SenseHat
+sense = SenseHat()
 
 
 import json
@@ -166,6 +166,7 @@ def acq_sensori(threadName, delay, counter):
 		if exitFlag:
 			threadName.exit()
 		time.sleep(delay)
+		print(" Lettura e caricamento misure il: " + "%s: %s" % (threadName, time.ctime(time.time())))
 		# background
 		bg = red
 		
@@ -192,7 +193,6 @@ def acq_sensori(threadName, delay, counter):
 		
 		# Visualizzazione messaggio scorrevole SenseHat
 		sense.show_message(message, text_colour=tx, scroll_speed=0.50, back_colour=bg)
-		print(" Lettura e caricamento misure il: " + "%s: %s" % (threadName, time.ctime(time.time())))
 		counter -= 1
 		
 
