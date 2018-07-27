@@ -112,8 +112,7 @@ def ins_lettura_coda ( misura, address_sens):
 	writeSingleData = GestDatiSens(address_sens) # indirizzo del sensore
 	# istanzia la classe per data e ora in ephoc ms
 	TMSTP = TSDataOra()
-
-#	writeSingleData.address = address_sens						# indirizzo del sensore
+	# completa l'inserimento dati
 	writeSingleData.payload = misura						# Misura letta
 	writeSingleData.timestampDevice = TMSTP.valoreEpoch()	# data-ora in epoch ms attuale
 	writeSingleData.qos = "good" 
@@ -174,26 +173,25 @@ def acq_sensori(threadName, delay, counter):
 		tx = white
 		
 		# Lettura dai sensori del SenseHat acquisizione Temperatura, Pressione, Humidity
-#		t = sense.get_temperature()
-#		p = sense.get_pressure()
-#		h = sense.get_humidity()
-		t = 1
-		p = 2
-		h = 3
+		t = sense.get_temperature()
+		p = sense.get_pressure()
+		h = sense.get_humidity()
+
 		# Arrotondamento ad una cifra decimale
 		t = round(t, 1)
 		p = round(p, 1)
 		h = round(h, 1)
 
+		# caricamento lettura nella lista
 		ins_lettura_coda(t, INDIRIZZO_SENS_TEMPERATURA)
 		ins_lettura_coda(p, INDIRIZZO_SENS_PRESSIONE)
 		ins_lettura_coda(h, INDIRIZZO_SENS_UMIDITA)
 		
 		# str() conversione valori int in string per poterli concatenare 
-#		message = "Temperature: " + str(t) + "Pressure: " + str(p) + "Humidity: " + str(h)
+		message = "Temperature: " + str(t) + "Pressure: " + str(p) + "Humidity: " + str(h)
 		
 		# Visualizzazione messaggio scorrevole SenseHat
-#		sense.show_message(message, text_colour=tx, scroll_speed=0.50, back_colour=bg)
+		sense.show_message(message, text_colour=tx, scroll_speed=0.50, back_colour=bg)
 		print(" Lettura e caricamento misure il: " + "%s: %s" % (threadName, time.ctime(time.time())))
 		counter -= 1
 		
@@ -226,13 +224,11 @@ def invio_messaggio(threadName, delay, counter):
 		if exitFlag:
 			threadName.exit()
 		time.sleep(delay)
-		###   forzatura debug
-#		ins_lettura_coda(20.5, INDIRIZZO_SENS_TEMPERATURA)
-#		ins_lettura_coda(10.9, INDIRIZZO_SENS_PRESSIONE)
-#		ins_lettura_coda(60, INDIRIZZO_SENS_UMIDITA)
-		print(threadName, "Messaggio MQTT", str(counter))
 		if GestMsg.presenza_misure(listmisure) == True:
 			GestMsg.crea_msg_COV_Muf_Muv("DAB_0001",listmisure)
+			print(threadName, "Messaggio MQTT", str(counter))
+		else:
+			print (" Non ci sono misure sensori da inviare" )
 		counter -= 1
 
 
