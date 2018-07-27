@@ -7,7 +7,6 @@ RUN set -xe \
     && apt-get update \
     && apt-get install python-pip
 RUN pip install --upgrade pip
-RUN pip install -r ./requirements.txt
 RUN pip install paho-mqtt
 
 WORKDIR /usr/src/app
