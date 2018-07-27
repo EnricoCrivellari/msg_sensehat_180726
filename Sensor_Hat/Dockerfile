@@ -2,7 +2,9 @@ FROM resin/raspberry-pi3-debian:jessie
 
 
 RUN apt-get update && apt-get install -yq \
-   python sense-hat raspberrypi-bootloader && \
+   python3 python sense-hat raspberrypi-bootloader python-pip python3-pip && \
+   pip install paho-mqtt && \
+   apt-get upgrade && \
    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 
