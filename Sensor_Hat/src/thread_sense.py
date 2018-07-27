@@ -4,8 +4,8 @@
 import threading
 import time
 from random import randint
-from sense_hat import SenseHat
-sense = SenseHat()
+#from sense_hat import SenseHat
+#sense = SenseHat()
 
 
 import json
@@ -143,19 +143,19 @@ class TestThread(threading.Thread):
         time.sleep(self.counter)
         print("Starting " + self.name)
         if self.threadID == 1:
-            acq_sensori(self.name, self.counter, 2)
+            acq_sensori(self.name, self.counter, 20)
         
         if self.threadID == 2:
-            print_time(self.name, self.counter, 50)
+            print_time(self.name, self.counter, 10)
 
         if self.threadID == 3:
-            print_counter(self.name, self.counter, 50)
+            print_counter(self.name, self.counter, 10)
 
         if self.threadID == 4:
-            invio_messaggio(self.name, self.counter, 20)
+            invio_messaggio(self.name, self.counter, 10)
 
 			
-			
+####     Dati al momento statici			
 INDIRIZZO_SENS_TEMPERATURA = "0001"
 INDIRIZZO_SENS_PRESSIONE = "0002"
 INDIRIZZO_SENS_UMIDITA = "0003"
@@ -163,31 +163,40 @@ INDIRIZZO_SENS_UMIDITA = "0003"
 #  DEFINIZIONE  THREAD  ID = 1
 #  Dichiarazione di tutte le azioni che devono essere svolte dal THREAD
 def acq_sensori(threadName, delay, counter):
+	while counter:
+		if exitFlag:
+			threadName.exit()
+		time.sleep(delay)
+		# background
+		bg = red
 		
-	# background
-	bg = red
-	
-	# colore testo
-	tx = white
-	
-	# Lettura dai sensori del SenseHat acquisizione Temperatura, Pressione, Humidity
-	t = sense.get_temperature()
-	p = sense.get_pressure()
-	h = sense.get_humidity()
-	
-	# Arrotondamento ad una cifra decimale
-	t = round(t, 1)
-	p = round(p, 1)
-	h = round(h, 1)
-	ins_lettura_coda(t, INDIRIZZO_SENS_TEMPERATURA)
-	ins_lettura_coda(p, INDIRIZZO_SENS_PRESSIONE)
-	ins_lettura_coda(h, INDIRIZZO_SENS_UMIDITA)
-	
-	# str() conversione valori int in string per poterli concatenare 
-	message = "Temperature: " + str(t) + "Pressure: " + str(p) + "Humidity: " + str(h)
-	
-	# Visualizzazione messaggio scorrevole SenseHat
-	sense.show_message(message, text_colour=tx, scroll_speed=0.50, back_colour=bg)
+		# colore testo
+		tx = white
+		
+		# Lettura dai sensori del SenseHat acquisizione Temperatura, Pressione, Humidity
+#		t = sense.get_temperature()
+#		p = sense.get_pressure()
+#		h = sense.get_humidity()
+		t = 1
+		p = 2
+		h = 3
+		# Arrotondamento ad una cifra decimale
+		t = round(t, 1)
+		p = round(p, 1)
+		h = round(h, 1)
+
+		ins_lettura_coda(t, INDIRIZZO_SENS_TEMPERATURA)
+		ins_lettura_coda(p, INDIRIZZO_SENS_PRESSIONE)
+		ins_lettura_coda(h, INDIRIZZO_SENS_UMIDITA)
+		
+		# str() conversione valori int in string per poterli concatenare 
+#		message = "Temperature: " + str(t) + "Pressure: " + str(p) + "Humidity: " + str(h)
+		
+		# Visualizzazione messaggio scorrevole SenseHat
+#		sense.show_message(message, text_colour=tx, scroll_speed=0.50, back_colour=bg)
+		print(" Lettura e caricamento misure il: " + "%s: %s" % (threadName, time.ctime(time.time())))
+		counter -= 1
+		
 
 #  DEFINIZIONE  THREAD  ID = 2
 #  Dichiarazione di tutte le azioni che devono essere svolte dal THREAD
@@ -222,7 +231,6 @@ def invio_messaggio(threadName, delay, counter):
 #		ins_lettura_coda(10.9, INDIRIZZO_SENS_PRESSIONE)
 #		ins_lettura_coda(60, INDIRIZZO_SENS_UMIDITA)
 		print(threadName, "Messaggio MQTT", str(counter))
-		print ("messaggio - counter =" + str(counter) + " - threadName: " + threadName)
 		if GestMsg.presenza_misure(listmisure) == True:
 			GestMsg.crea_msg_COV_Muf_Muv("DAB_0001",listmisure)
 		counter -= 1
